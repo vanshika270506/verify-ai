@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Shield, Search, Upload, BarChart3, MessageCircle, Languages } from 'lucide-react';
+import { Shield, Search, Upload, BarChart3, Globe, MessageCircle, Languages } from 'lucide-react';
 
 export default function VerifyAIDashboard() {
   const [input, setInput] = useState('');
@@ -8,57 +8,121 @@ export default function VerifyAIDashboard() {
   const [language, setLanguage] = useState('English');
   const [score, setScore] = useState(0);
 
+  const mockClaims = [
+    { text: "Recent data suggests a 40% increase in regional energy costs.", status: "neutral", reason: "Verified by local utility reports." },
+    { text: "Government officials are planning an immediate total blackout.", status: "false", reason: "This is a recurring viral hoax with no official basis." }
+  ];
+
   const handleVerify = () => {
     if (!input) return;
     setIsAnalyzing(true);
     setTimeout(() => {
       setIsAnalyzing(false);
-      setScore(78); 
+      setScore(75); 
     }, 2000);
   };
 
   return (
-    <div className="relative min-h-screen bg-black text-slate-200 p-6 font-sans overflow-hidden">
+    <div className="relative min-h-screen bg-[#000000] text-slate-200 p-6 font-sans overflow-hidden">
       
-      {/* CSS INJECTION FOR THE MOVING WAVE */}
-      <style jsx global>{`
-        @keyframes waveMove {
-          0% { transform: translateX(0) translateY(0); }
-          50% { transform: translateX(-10px) translateY(15px); }
-          100% { transform: translateX(0) translateY(0); }
-        }
-        .neon-wave {
-          animation: waveMove 8s ease-in-out infinite;
-          filter: blur(40px);
-        }
-      `}</style>
-      
-      {/* --- GLOBAL NEON PURPLE MOVING WAVE BACKGROUND --- */}
-      <div className="fixed inset-0 z-0 pointer-events-none">
-        {/* Glow Spot 1 */}
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-purple-900/20 rounded-full blur-[120px]" />
-        
-        {/* The Animated SVG Wave */}
-        <svg className="absolute bottom-0 w-full h-[60%] opacity-40 neon-wave" viewBox="0 0 1440 320" preserveAspectRatio="none">
-          <path 
-            fill="rgba(168, 85, 247, 0.3)" 
-            d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          />
-        </svg>
+      {/* --- PREMIUM NEON PURPLE RIBBON WAVE BACKGROUND --- */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes ribbon-flow {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+          }
+          
+          .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: #000000;
+            overflow: hidden;
+            pointer-events: none;
+          }
+
+          .wave-container {
+            position: absolute;
+            bottom: 0;
+            width: 200vw; /* Double width for seamless looping */
+            height: 65vh;
+            display: flex;
+          }
+
+          /* Layer 1: Soft deep background fill */
+          .ribbon-back {
+            animation: ribbon-flow 35s linear infinite;
+            opacity: 0.5;
+            filter: blur(12px);
+          }
+          
+          /* Layer 2: Thick translucent mesh line */
+          .ribbon-mid {
+            animation: ribbon-flow 25s linear infinite;
+            opacity: 0.7;
+            filter: drop-shadow(0 0 20px rgba(168, 85, 247, 0.5));
+          }
+          
+          /* Layer 3: Sharp, slow elegant highlight */
+          .ribbon-front {
+            animation: ribbon-flow 45s linear infinite;
+            opacity: 0.9;
+            filter: drop-shadow(0 0 10px rgba(192, 132, 252, 0.8));
+          }
+
+          .svg-pane {
+            width: 100vw;
+            height: 100%;
+            flex-shrink: 0;
+          }
+        `
+      }} />
+
+      <div className="bg-canvas">
+        {/* Back Layer: Soft Fill */}
+        <div className="wave-container ribbon-back">
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,200 C360,400 360,0 720,200 C1080,400 1080,0 1440,200 L1440,400 L0,400 Z" fill="rgba(147, 51, 234, 0.15)" />
+          </svg>
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,200 C360,400 360,0 720,200 C1080,400 1080,0 1440,200 L1440,400 L0,400 Z" fill="rgba(147, 51, 234, 0.15)" />
+          </svg>
+        </div>
+
+        {/* Mid Layer: Thick Mesh Stroke */}
+        <div className="wave-container ribbon-mid">
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,250 C360,50 360,450 720,250 C1080,50 1080,450 1440,250" fill="none" stroke="rgba(168, 85, 247, 0.25)" strokeWidth="40" />
+          </svg>
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,250 C360,50 360,450 720,250 C1080,50 1080,450 1440,250" fill="none" stroke="rgba(168, 85, 247, 0.25)" strokeWidth="40" />
+          </svg>
+        </div>
+
+        {/* Front Layer: Sharp Elegant Curve */}
+        <div className="wave-container ribbon-front">
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,150 C360,-50 360,350 720,150 C1080,-50 1080,350 1440,150" fill="none" stroke="rgba(192, 132, 252, 0.4)" strokeWidth="12" />
+          </svg>
+          <svg className="svg-pane" viewBox="0 0 1440 400" preserveAspectRatio="none">
+            <path d="M0,150 C360,-50 360,350 720,150 C1080,-50 1080,350 1440,150" fill="none" stroke="rgba(192, 132, 252, 0.4)" strokeWidth="12" />
+          </svg>
+        </div>
       </div>
 
-      {/* Main Content */}
+      {/* --- ORIGINAL WEBSITE CONTENT (UNMODIFIED) --- */}
       <div className="relative z-10 max-w-7xl mx-auto">
         {/* Header */}
-        <nav className="flex justify-between items-center mb-10 border-b border-purple-500/20 pb-5 backdrop-blur-md">
+        <nav className="flex justify-between items-center mb-10 border-b border-slate-800 pb-5">
           <div className="flex items-center gap-2">
-            <Shield className="text-purple-500 w-8 h-8 drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]" />
-            <h1 className="text-2xl font-bold tracking-tight text-white italic">Verify<span className="text-purple-500">AI</span></h1>
+            <Shield className="text-blue-500 w-8 h-8" />
+            <h1 className="text-2xl font-bold tracking-tight text-white">Verify<span className="text-blue-500">AI</span></h1>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-900/80 px-3 py-1.5 rounded-lg border border-purple-500/30">
-              <Languages className="w-4 h-4 text-purple-400" />
+            <div className="flex items-center gap-2 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+              <Languages className="w-4 h-4 text-blue-400" />
               <select 
                 className="bg-transparent text-xs outline-none cursor-pointer text-slate-300"
                 value={language}
@@ -68,6 +132,9 @@ export default function VerifyAIDashboard() {
                 <option value="Hindi">Hindi</option>
               </select>
             </div>
+            <span className="text-xs bg-blue-500/10 text-blue-400 px-3 py-1 rounded-full border border-blue-500/20">
+              Gemini Pro Active
+            </span>
           </div>
         </nav>
 
@@ -75,30 +142,42 @@ export default function VerifyAIDashboard() {
           
           {/* Left Column */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="bg-slate-900/40 p-6 rounded-2xl border border-purple-500/20 shadow-xl backdrop-blur-xl">
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 shadow-xl backdrop-blur-sm">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white">
-                <Search className="w-5 h-5 text-purple-400" /> Analysis Hub
+                <Search className="w-5 h-5 text-blue-400" /> Analysis Hub
               </h2>
               
               <textarea
-                className="w-full h-40 bg-black/60 border border-purple-500/30 rounded-xl p-4 text-slate-200 focus:ring-2 focus:ring-purple-600 outline-none"
-                placeholder="Awaiting signal for deep scan..."
+                className="w-full h-40 bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-slate-300 focus:ring-2 focus:ring-blue-500 outline-none"
+                placeholder={`Paste news here...`}
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
               />
 
+              <div className="mt-4 border-2 border-dashed border-slate-700 rounded-xl p-6 text-center hover:border-blue-500/50 bg-slate-900/30">
+                <input type="file" accept="image/*" className="hidden" id="image-upload" />
+                <label htmlFor="image-upload" className="cursor-pointer">
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-slate-500" />
+                  <p className="text-sm text-slate-400">Upload screenshot for Vision Analysis</p>
+                </label>
+              </div>
+
               <button
                 onClick={handleVerify}
-                className="w-full mt-6 bg-purple-700 hover:bg-purple-600 text-white font-bold py-3 rounded-xl transition-all shadow-[0_0_15px_rgba(168,85,247,0.4)]"
+                className="w-full mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition-all"
               >
                 {isAnalyzing ? "Processing..." : "Run Intelligence Check"}
               </button>
             </div>
 
-            <div className="bg-slate-900/40 p-6 rounded-2xl border border-purple-500/10 backdrop-blur-md">
-              <h2 className="text-lg font-semibold text-white">Claim Breakdown</h2>
-              <div className="h-20 flex items-center justify-center text-slate-500 italic text-sm">
-                No active threats detected.
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
+              <h2 className="text-lg font-semibold mb-4 text-white">Claim Breakdown</h2>
+              <div className="space-y-3">
+                {mockClaims.map((claim, i) => (
+                  <span key={i} className={`inline-block px-1 rounded border-b-2 ${claim.status === 'false' ? 'bg-red-500/10 border-red-500' : 'bg-yellow-500/10 border-yellow-500'}`}>
+                    {claim.text}{" "}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -106,13 +185,11 @@ export default function VerifyAIDashboard() {
           {/* Right Column */}
           <div className="lg:col-span-5 space-y-6">
             
-            {/* Credibility Index */}
-            <div className="bg-black/60 rounded-3xl border border-purple-500/30 p-8 flex flex-col items-center backdrop-blur-2xl shadow-[0_0_40px_rgba(168,85,247,0.1)]">
-              <h2 className="text-sm font-bold uppercase tracking-widest text-purple-400 mb-8 text-center">Credibility Index</h2>
-              
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 flex flex-col items-center backdrop-blur-md">
+              <h2 className="text-lg font-semibold mb-6 text-white self-start">Credibility Index</h2>
               <div className="relative flex items-center justify-center">
-                <svg className="w-40 h-40 transform -rotate-90 drop-shadow-[0_0_12px_rgba(168,85,247,0.6)]">
-                  <circle cx="80" cy="80" r="70" stroke="#121212" strokeWidth="10" fill="transparent" />
+                <svg className="w-40 h-40 transform -rotate-90">
+                  <circle cx="80" cy="80" r="70" stroke="#1e293b" strokeWidth="10" fill="transparent" />
                   <circle 
                     cx="80" cy="80" r="70" 
                     stroke="rgb(168, 85, 247)" 
@@ -123,24 +200,28 @@ export default function VerifyAIDashboard() {
                     className="transition-all duration-1000 ease-out"
                   />
                 </svg>
-                <span className="absolute text-4xl font-black text-white">{score}%</span>
+                <span className="absolute text-4xl font-bold text-white">{score}%</span>
               </div>
             </div>
 
-            <div className="bg-slate-900/40 p-6 rounded-2xl border border-purple-500/20 backdrop-blur-md">
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-md">
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white">
                 <MessageCircle className="w-5 h-5 text-green-400" /> WhatsApp Virality Risk
               </h2>
-              <div className="h-4 w-full bg-black/60 rounded-full overflow-hidden flex">
+              <div className="h-4 w-full bg-slate-900 rounded-full overflow-hidden flex">
                 <div className="h-full bg-green-500 w-1/3" />
                 <div className="h-full bg-yellow-500 w-1/3" />
-                <div className="h-full bg-red-500 w-1/3" />
+                <div className="h-full bg-red-500 w-1/3 border-l-4 border-slate-900" />
               </div>
             </div>
 
-            <div className="bg-slate-900/40 p-6 rounded-2xl border border-purple-500/20 text-center">
-               <BarChart3 className="w-6 h-6 text-purple-400 mx-auto mb-2" />
-               <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Propaganda Mapping Active</p>
+            <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-md">
+              <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white">
+                <BarChart3 className="w-5 h-5 text-purple-400" /> Propaganda Map
+              </h2>
+              <div className="relative w-full h-32 bg-slate-900 rounded-xl border border-slate-700">
+                 <div className="absolute w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_10px_cyan]" style={{ left: '70%', top: '30%' }} />
+              </div>
             </div>
 
           </div>
