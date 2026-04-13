@@ -9,6 +9,9 @@ export default function VerifyAIDashboard() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [language, setLanguage] = useState('English');
   const [score, setScore] = useState(0);
+  const [risk, setRisk] = useState('Low');
+  const [explanation, setExplanation] = useState('');
+  const [analysisResponse, setAnalysisResponse] = useState('');
 
   const mockClaims = [
     { text: "Recent data suggests a 40% increase in regional energy costs.", status: "neutral", reason: "Verified by local utility reports." },
@@ -27,23 +30,34 @@ export default function VerifyAIDashboard() {
     try {
       // Initialize Gemini using the key from your .env.local file
       const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+      const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite-preview" });
 
-      // The Master Prompt forcing a JSON response
+      // The Master Prompt forcing a JSON response with a concrete explanation
       const prompt = `
-        You are an elite misinformation detection engine. Analyze the following text: "${input}"
+        You are a fact-checking engine. Analyze the following claim exactly as written and determine whether it is true, false, misleading, or unverified.
+        
+        Claim: "${input}"
+        
+        Use only verifiable knowledge. Do not make the claim more likely because it sounds plausible. If the claim cannot be confirmed from reliable evidence, treat it as low credibility.
         
         Respond ONLY with a valid JSON object matching this exact structure, nothing else:
         {
           "credibility_score": [A number from 0 to 100 based on factual accuracy],
-          "virality_risk": ["Low", "Med", or "High" based on emotional panic language]
+          "virality_risk": ["Low", "Med", or "High" based on emotional or panic language],
+          "explanation": "A short summary explaining the score and whether the claim is likely true or false."
         }
+        
+        Rules:
+        1. If the claim is supported by known facts, set credibility_score 80-100.
+        2. If the claim is partially true, misleading, or lacks evidence, set credibility_score 40-79.
+        3. If the claim is false, fabricated, or unverified, set credibility_score 0-39.
+        4. Keep explanation concise and factual.
       `;
 
       // Call the API
       const result = await model.generateContent(prompt);
       const response = await result.response;
-      const textResponse = response.text();
+      const textResponse = await response.text();
       
       // Clean up the response in case Gemini adds markdown like ```json ... ```
       const cleanedJson = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -51,8 +65,10 @@ export default function VerifyAIDashboard() {
       // Parse the data and update your UI!
       const data = JSON.parse(cleanedJson);
       
-      setScore(data.credibility_score);
-      // Later you can add states to handle the virality_risk too!
+      setScore(Number(data.credibility_score ?? 0));
+      setRisk(data.virality_risk ?? 'Low');
+      setExplanation(data.explanation ?? 'No explanation provided.');
+      setAnalysisResponse(cleanedJson);
 
     } catch (error) {
       console.error("Error analyzing text:", error);
@@ -154,6 +170,28 @@ export default function VerifyAIDashboard() {
               >
                 {isAnalyzing ? "Processing..." : "Run Intelligence Check"}
               </button>
+
+              <div className="mt-6 bg-slate-900/70 border border-slate-700 rounded-2xl p-5 text-slate-300">
+                <h3 className="text-base font-semibold text-white mb-3">AI Response</h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="rounded-2xl bg-slate-800/70 p-4 border border-slate-700">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400 mb-2">Credibility</p>
+                    <p className="text-3xl font-bold text-white">{score}%</p>
+                  </div>
+                  <div className="rounded-2xl bg-slate-800/70 p-4 border border-slate-700">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400 mb-2">Virality Risk</p>
+                    <p className="text-3xl font-bold text-white">{risk}</p>
+                  </div>
+                </div>
+                <div className="mt-4 rounded-2xl bg-slate-800/70 border border-slate-700 p-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500 mb-2">Explanation</p>
+                  <p className="text-sm text-slate-300 leading-6">{explanation || 'No explanation provided yet. Run the intelligence check to see the verdict.'}</p>
+                </div>
+                <div className="mt-4 rounded-2xl bg-slate-950/90 border border-slate-800 p-4 overflow-x-auto">
+                  <p className="text-xs uppercase tracking-[0.18em] text-slate-500 mb-2">Raw JSON</p>
+                  <pre className="whitespace-pre-wrap text-sm font-mono text-slate-300">{analysisResponse || 'No analysis result yet. Run the intelligence check to see the response here.'}</pre>
+                </div>
+              </div>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-sm">
@@ -194,11 +232,12 @@ export default function VerifyAIDashboard() {
               <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-white">
                 <MessageCircle className="w-5 h-5 text-green-400" /> WhatsApp Virality Risk
               </h2>
-              <div className="h-4 w-full bg-slate-900 rounded-full overflow-hidden flex">
+              <div className="h-4 w-full bg-slate-900 rounded-full overflow-hidden flex mb-3">
                 <div className="h-full bg-green-500 w-1/3" />
                 <div className="h-full bg-yellow-500 w-1/3" />
                 <div className="h-full bg-red-500 w-1/3 border-l-4 border-slate-900" />
               </div>
+              <p className="text-sm text-slate-300">Risk: <span className="font-semibold text-white">{risk}</span></p>
             </div>
 
             <div className="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 backdrop-blur-md">
